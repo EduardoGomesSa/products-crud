@@ -7,6 +7,10 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+const sequelize = require("./database");
+const Product = require("./models/Product");
+const productRoutes = require("./routes/ProductRoutes");
+
 var app = express();
 
 // view engine setup
@@ -15,6 +19,18 @@ app.set('view engine', 'jade');
 
 app.use(logger('dev'));
 app.use(express.json());
+
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Conexão com o banco de dados bem-sucedida!");
+    await sequelize.sync({ force: true }); // Use "force: true" apenas em desenvolvimento.
+    console.log("Banco de dados sincronizado!");
+  } catch (error) {
+    console.error("Erro ao conectar ao banco de dados:", error);
+  }
+})();
+
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
@@ -36,6 +52,12 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
+});
+
+app.use("/products", productRoutes);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
 
 module.exports = app;
