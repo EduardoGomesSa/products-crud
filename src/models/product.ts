@@ -1,17 +1,19 @@
-class Product {
-    name: string;
-    price: number;
-    amount: number;
-  
-    constructor(name: string, price: number, amount: number) {
-      this.name = name;
-      this.price = price;
-      this.amount = amount;
-    }
-  
-    // Método para calcular o valor total com base na quantidade
-    getTotalValue(): number {
-      return this.price * this.amount;
-    }
-  }
-  
+const { DataTypes } = require("sequelize");
+const sequelize = require("../database");
+
+const Product = sequelize.define("Product", {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  price: {
+    type: DataTypes.FLOAT,
+    allowNull: false,
+  },
+  amount: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+});
+
+module.exports = Product;
